@@ -29,6 +29,7 @@ Call the handler function to return a list of tosr0x objects:
 
     >myTosr0x = th[0]
     >print myT0sr0x
+
     <tosr0x.relayModule instance at 0xb68be46c>
 
 Alternatively, specify a USB serial device: 
