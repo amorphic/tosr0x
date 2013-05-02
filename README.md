@@ -19,6 +19,7 @@ Usage
 
 Call the handler function to return a list of tosr0x objects:
 
+    >import tosr0x
     >th = tosr0x.handler()
 
     Testing USB serial device on /dev/ttyUSB0
