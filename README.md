@@ -5,7 +5,6 @@ A Python module for communicating with 'TOSR0x' USB relay controllers available 
 
 The module is a wrapper around Python's default serial module. It provides functionality to detect TOSR0x devices, set relay states and query relay states.
 
-I hope that this module goes some small way to lowering barriers to entry into the Internet of Things.
 
 Requirements
 ----------------------
