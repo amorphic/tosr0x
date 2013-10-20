@@ -22,11 +22,11 @@ Use setup.py:
 
 If using Debian or a derivative (Ubuntu) additional USB permissions may be required:
 
-Add the user to the 'dialout' group and add an appropriate udev rule:
+ Add the user to the 'dialout' group:
 
     >sudo usermod -G dialout -a <username>
 
-Add a udev rules file to allow access to usb devices:
+ Add a udev rules file to allow access to usb devices:
 
     >cat /etc/udev/rules.d/50-usb.rules
     # allow access to usb devices for users in dialout group
