@@ -13,6 +13,25 @@ Requirements
 * Linux (may work with other Unix variants)
 * Python serial module (should be installed by default)
 
+Installation
+----------------------
+
+Use setup.py:
+
+    python setup.py install
+
+If using Debian or a derivative (Ubuntu) additional USB permissions may be required:
+
+Add the user to the 'dialout' group and add an appropriate udev rule:
+
+    >sudo usermod -G dialout -a <username>
+
+Add a udev rules file to allow access to usb devices:
+
+    >cat /etc/udev/rules.d/50-usb.rules
+    # allow access to usb devices for users in dialout group
+    'SUBSYSTEM=="usb", MODE="0666", GROUP="dialout"
+
 Usage
 ----------------------
 
