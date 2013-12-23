@@ -16,9 +16,17 @@ rm2 = relayModule(devicePath='/dev/ttyUSB4')
 
 Author: James Stewart
 http://jimter.net
-http://github/jstewart101'''
+http://github/amorphic
+
+TODO:
+- fix logging
+- proper setup.py etc
+- fix pip deployment
+- update master with changes here
+'''
 
 import sys
+import os
 import time
 import serial
 import logging
@@ -80,8 +88,7 @@ def handler(devicePath=False):
         devicePaths = [devicePath]
     else:
         # otherwise check all device paths /dev/ttyUSB*
-        devicePaths = ['/dev/ttyUSB' + str(l) for l in range(0, 256)]
-
+        devicePaths = [os.path.join('/dev', p) for p in os.listdir('/dev') if 'ttyUSB' in p]
     # attempt to locate TOSR0x devices on paths
     devices = locate_devices(devicePaths)
     return devices
@@ -95,13 +102,17 @@ def locate_devices(devicePaths):
         if device:
             log.info('TOSR0x device found on %s' % devicePath)
             devices.append(device)
-            
+
     return devices
 
 def check_path(devicePath):
-    '''check for TOSR0x device at a given location by querying 
+    '''check for TOSR0x device at a given location by querying
     id/verison and checking response'''
 
+    # only continue if path exists
+    if not os.path.exists(devicePath):
+        return False
+    # connect to serial device
     try:
         # usb serial device discovered if no exception thrown
         serialDevice = serial.Serial(devicePath, timeout=2)
@@ -111,14 +122,14 @@ def check_path(devicePath):
         # location is not a serial device or not behaving as expected
         return False
     log.info('Testing USB serial device on %s' % devicePath)
-    # send id/version request 
+    # send id/version request
     serialDevice.write(commands['getIdVersion'])
     # module should return 2-byte string indicating module id, software version
     response = convert_hex_to_int(serialDevice.readall())
     if len(response) == 2 and response[0] == expectedModuleId:
         # expected response returned so device is a TOSR0x
         thisTosr0x = relayModule(serialDevice)
-        return thisTosr0x 
+        return thisTosr0x
     # not expected response so device is not a TOSR0x
     return False
 
@@ -162,7 +173,7 @@ class relayModule():
         # read hex response and convert to binary string
         responseBits = convert_hex_to_bin_str(self.device.readall())
         self.relayCount = len(responseBits)
-        #set all relays to position 0 
+        #set all relays to position 0
         self.set_relay_position(0, 0)
 
     def set_relay_position(self, relay, position):
@@ -203,7 +214,7 @@ class relayModule():
         responseBits.reverse()
         # create dictionary of relay states
         relayStates = {}
-        relay = 1 
+        relay = 1
         for bit in responseBits:
             relayStates[relay] = int(bit)
             relay += 1
