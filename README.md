@@ -76,6 +76,4 @@ Get relay positions, (returned as a dict {relay : state}):
 Projects
 ----------------------
 
-This module will form the basis of my forthcoming Python-based temperature controller, [braubuddy](https://github.com/jstewart101/braubuddy).
-
-If you use this module in an interesting project please let me know and I'll add a link here.
+This module will form the basis of my forthcoming thermostat framework, [braubuddy](https://github.com/amorphic/braubuddy).
