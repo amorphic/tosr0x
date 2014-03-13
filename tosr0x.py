@@ -197,7 +197,7 @@ class relayModule():
 
 	#set all relays to position 1
         self.set_relay_position(0, 1)
-	#required for lazyBone (relay of 1) not supporting previous command
+	#required for lazyBone (relay of 1) not supporting previous command?
         self.set_relay_position(1, 1)
 
         # request states from device, read hex response and convert to bin strng
@@ -215,7 +215,7 @@ class relayModule():
         self.relayCount = len(responseBits)
         #set all relays to position 0
         self.set_relay_position(0, 0)
-	#required for lazyBone (relay of 1) not supporting previous command
+	#required for lazyBone (relay of 1) not supporting previous command?
         self.set_relay_position(1, 0)
 
     def set_relay_position(self, relay, position):
