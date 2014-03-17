@@ -191,6 +191,32 @@ class relayModule():
 	else :
             self.__set_relay_count__()
 
+    def __src__(self,  command, responseRequired=False ):
+        '''send a relay command to the realy considering type of relay
+        and returns date returned for rely if responseRequired'''
+
+	if self.type == SERIAL_TYPE :
+            self.device.write(command)
+	    if responseRequired :
+		return self.device.readall()
+        else :
+	    try:
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.sock.connect(self.relayAddress)
+	 	self.sock.recv(16) #clear relay promt
+            	self.sock.sendall(command)
+	        if responseRequired :
+	    	    response = self.sock.recv(16)
+            	self.sock.shutdown(socket.SHUT_RDWR)
+            	self.sock.close()
+		if responseRequired :
+		    return (response)
+	    except:
+		print "Unexpected error:", sys.exc_info()[0]
+            	self.sock.shutdown(socket.SHUT_RDWR) 
+		self.sock.close() #avoid leaving socket open
+
+
     def __set_relay_count__(self):
         '''discover count of relays on module by setting all relays
         to position 1 and examining length of status byte'''
@@ -201,16 +227,8 @@ class relayModule():
         self.set_relay_position(1, 1)
 
         # request states from device, read hex response and convert to bin strng
-	if self.type == SERIAL_TYPE :
-            self.device.write(commands['getStates'])
-	    responseBits = convert_hex_to_bin_str(self.device.readall())
-        else :
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect(self.relayAddress)
-            self.sock.recv(16)
-            self.sock.sendall(commands['getStates'])
-	    responseBits = convert_hex_to_bin_str(self.sock.recv(16))
-            self.sock.close()
+        response = self.__src__( commands['getStates'], True)
+        responseBits = convert_hex_to_bin_str(response)
 
         self.relayCount = len(responseBits)
         #set all relays to position 0
@@ -229,14 +247,7 @@ class relayModule():
             # position must be an integer 0-1
             if type(position) == int and position in range(0,2):
                 # set relay position
-		if self.type == SERIAL_TYPE :
-                    self.device.write(commands['setPosition'][position][relay])
-		else :
-                    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    self.sock.connect(self.relayAddress)
-                    self.sock.recv(16)
-                    self.sock.sendall(commands['setPosition'][position][relay])
-                    self.sock.close()
+		self.__src__( commands['setPosition'][position][relay])
 		return True
             else:
                 log.error('position must be 0 or 1')
@@ -252,16 +263,8 @@ class relayModule():
         the corresponding relay is in position 1/0'''
 
         # request states from device, read hex response and convert to bin strng
-	if self.type == SERIAL_TYPE :
-            self.device.write(commands['getStates'])
-	    responseBits = convert_hex_to_bin_str(self.device.readall())
-        else :
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect(self.relayAddress)
-            self.sock.recv(16)
-            self.sock.sendall(commands['getStates'])
-	    responseBits = convert_hex_to_bin_str(self.sock.recv(16))
-            self.sock.close()
+        response = self.__src__( commands['getStates'], True)
+	responseBits = convert_hex_to_bin_str (response)
 
         # binary conversion drops values until a 1 is encountered
         # assume missing values are 0 and pad to give a value for all relays
@@ -281,16 +284,6 @@ class relayModule():
     # returns ambient temperature. 
     # it should only be called in Relay Module supports it and has a temperature
     # probe connected to it. Otherwise if using WIFI, it will hang.
-	if self.type == SERIAL_TYPE :
-	    self.device.write(commands['getTemperature'])
-	    temperature  = (self.device.readall())
-	else :
-	    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect(self.relayAddress)
-            self.sock.recv(16)
-            self.sock.sendall(commands['getTemperature'])
-            # read hex response and convert to binary string
-            temperature = self.sock.recv(16)
-            self.sock.close()
-        return temperature.rstrip() #eliminates CR+LF
+        temperature = self.__src__(commands['getTemperature'],True)
+	return temperature.rstrip() #eliminates CR+LF
 

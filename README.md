@@ -12,7 +12,7 @@ The automatic discovery of number of relays is made optional, for the cases when
 
 These modules can also mount a WIFI card. This library now supports connecting to the relay modules either through serial interface or WIFI.  For a WIFI relay you can cerate a instance indicating IP address, port and optionally the relay count of this module (1 for Lazybone, 2, 4 or 8)
 
-   e.g. myTosr0x = tosr0x.relayModule('192.168.1.2',2000),2)
+   e.g. myTosr0x = tosr0x.relayModule( ('192.168.1.2',2000), 2)
 
 There are some newer modules from tinyos that have the option to attach a temperature probe, and in this case it is possible to read the temperature through an additional command. For this case, a new 'get_temperature' method is added to read the ambient temperature.
 
