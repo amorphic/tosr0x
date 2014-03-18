@@ -72,9 +72,15 @@ Alternatively, specify a USB serial device:
 
 It is possible to use directly the class without using the handler:
 
+    FOR SERIAL:
     >import serial
-    >sd=serial.Serial('/dev/ttyUSB0', timeout=2)
-    >myTosr0x=tosr0x.relayModule(sd) 
+    >import tosr0x
+    >sd=serial.Serial('/dev/ttyUSB0', timeout=0.1)
+    >myTosr0x=tosr0x.relayModule(sd) #Num relays not specified in this example
+
+    FOR WIFI:
+    >import tosr0x
+    >myTosr0x = tosr0x.relayModule( ('192.168.1.2',2000), 2) #Module of 2 relays
 
 Set relay states to either 0 or 1:
 

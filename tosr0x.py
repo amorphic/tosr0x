@@ -44,6 +44,7 @@ import serial
 import types
 import socket 
 import logging
+from threading import Lock
 
 # logging
 log = logging.getLogger('tosr0x')
@@ -191,30 +192,51 @@ class relayModule():
 	else :
             self.__set_relay_count__()
 
-    def __src__(self,  command, responseRequired=False ):
+    def __send_relay_command__(self,  command, responseRequired=False ):
         '''send a relay command to the realy considering type of relay
         and returns date returned for rely if responseRequired'''
 
-	if self.type == SERIAL_TYPE :
-            self.device.write(command)
-	    if responseRequired :
-		return self.device.readall()
-        else :
-	    try:
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.sock.connect(self.relayAddress)
-	 	self.sock.recv(16) #clear relay promt
-            	self.sock.sendall(command)
+        criticalSection = Lock()
+        with criticalSection :
+
+	    if self.type == SERIAL_TYPE :
+                self.device.write(command)
 	        if responseRequired :
-	    	    response = self.sock.recv(16)
-            	self.sock.shutdown(socket.SHUT_RDWR)
-            	self.sock.close()
-		if responseRequired :
-		    return (response)
-	    except:
-		print "Unexpected error:", sys.exc_info()[0]
-            	self.sock.shutdown(socket.SHUT_RDWR) 
-		self.sock.close() #avoid leaving socket open
+	            return self.device.readall()
+            else :
+	        try:
+		    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	        except:
+		    print "Unexpected error: socket.socket", sys.exc_info()[0]
+		try:
+		    self.sock.connect(self.relayAddress)
+	        except:
+		    print "Unexpected error: socket.connectt", sys.exc_info()[0]
+		try:
+	     	    self.sock.recv(16) #clear relay promt
+	        except:
+		    print "Unexpected error: socket.recv(1)", sys.exc_info()[0]
+		try:
+                    self.sock.sendall(command)
+	        except:
+		    print "Unexpected error: socket.sendall", sys.exc_info()[0]
+		try:
+	            if responseRequired :
+	                response = self.sock.recv(16)
+	        except:
+		    print "Unexpected error: socket.recv(2)", sys.exc_info()[0]
+		try:
+                    #self.sock.shutdown(socket.SHUT_RDWR)
+                    self.sock.close()
+	        except:
+		    print "Unexpected error: sock.close", sys.exc_info()[0]
+		try:
+		    if responseRequired :
+		        return (response)
+	        except:
+		    print "Unexpected error: return", sys.exc_info()[0]
+                    #self.sock.shutdown(socket.SHUT_RDWR) 
+		    #self.sock.close() #avoid leaving socket open
 
 
     def __set_relay_count__(self):
@@ -227,8 +249,11 @@ class relayModule():
         self.set_relay_position(1, 1)
 
         # request states from device, read hex response and convert to bin strng
-        response = self.__src__( commands['getStates'], True)
+        response = self.__send_relay_command__( commands['getStates'], True)
+ 	print ord(response) #DEBUG
+
         responseBits = convert_hex_to_bin_str(response)
+        print responseBits #DEBUG
 
         self.relayCount = len(responseBits)
         #set all relays to position 0
@@ -247,7 +272,7 @@ class relayModule():
             # position must be an integer 0-1
             if type(position) == int and position in range(0,2):
                 # set relay position
-		self.__src__( commands['setPosition'][position][relay])
+		self.__send_relay_command__( commands['setPosition'][position][relay])
 		return True
             else:
                 log.error('position must be 0 or 1')
@@ -263,7 +288,7 @@ class relayModule():
         the corresponding relay is in position 1/0'''
 
         # request states from device, read hex response and convert to bin strng
-        response = self.__src__( commands['getStates'], True)
+        response = self.__send_relay_command__( commands['getStates'], True)
 	responseBits = convert_hex_to_bin_str (response)
 
         # binary conversion drops values until a 1 is encountered
@@ -284,6 +309,6 @@ class relayModule():
     # returns ambient temperature. 
     # it should only be called in Relay Module supports it and has a temperature
     # probe connected to it. Otherwise if using WIFI, it will hang.
-        temperature = self.__src__(commands['getTemperature'],True)
+        temperature = self.__send_relay_command__(commands['getTemperature'],True)
 	return temperature.rstrip() #eliminates CR+LF
 
