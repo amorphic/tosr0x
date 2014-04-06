@@ -221,13 +221,18 @@ class relayModule():
 
 	    if self.type == SERIAL_TYPE :
 		try:
-                    self.device.write(command)
+                    if self.device.write(command) != 1 :
+			log.error ('Unexpected Error: Serial Write diff of 1 byte')
+			correctExceution = False
 	        except: 
 		    correctExecution = False
 		    log.error ('error writing to serial device')
 	        try:
 	            if responseRequired :
 			response = self.device.read(16)
+			if len(response) < 1 :
+			    log.error ('Unexpected Error: Serial Read of less than 1 byte.')
+			    correctExecution = False
 		except :
 		    correctExecution = False
 		    log.error ('error reading from serial device')
