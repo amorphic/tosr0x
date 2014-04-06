@@ -220,22 +220,21 @@ class relayModule():
 	    correctExecution = True
 
 	    if self.type == SERIAL_TYPE :
-		correctExecution = True
-	        try:
+		try:
                     self.device.write(command)
 	        except: 
 		    correctExecution = False
 		    log.error ('error writing to serial device')
 	        try:
-	            response = self.device.readall()
+	            if responseRequired :
+			response = self.device.read(16)
 		except :
 		    correctExecution = False
 		    log.error ('error reading from serial device')
 
             else :
 	        # relay type is WIFI_TYPE
-		correctExecution = True
-	        try:
+		try:
 		    #log.info ('Creating socket...')
 		    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		    self.sock.settimeout(SOCKET_TIMEOUT)
