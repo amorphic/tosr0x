@@ -6,6 +6,21 @@ A Python module for communicating with 'TOSR0x' USB relay controllers available 
 The module is a wrapper around Python's default serial module. It provides functionality to detect TOSR0x devices, set relay states and query relay states.
 
 
+It also supports LazyBone, in thsi case only through WIFI
+
+Modifications by Alex from the original library:
+-----------------------------------------------
+
+The automatic discovery of number of relays is made optional, for the cases when it is not acceptable to toggle relay status as a method for discovering relays.If a number of relays is specified when an instance is created, then the intrusive automatic discovery won't be executed. 
+
+These modules can also mount a WIFI card. This library now supports connecting to the relay modules either through serial interface or WIFI.  For a WIFI relay you can cerate a instance indicating IP address, port and optionally the relay count of this module (1 for Lazybone, 2, 4 or 8)
+
+   e.g. myTosr0x = tosr0x.relayModule( ('192.168.1.2',2000), 2)
+
+There are some newer modules from tinyos that have the option to attach a temperature probe, and in this case it is possible to read the temperature through an additional command. For this case, a new 'get_temperature' method is added to read the ambient temperature.
+
+It's pending to handle some error conditions.
+
 Requirements
 ----------------------
 
@@ -58,6 +73,18 @@ Alternatively, specify a USB serial device:
     Testing USB serial device on /dev/ttyUSB3
     TOSR0x device found on /dev/ttyUSB3
 
+It is possible to use directly the class without using the handler:
+
+    FOR SERIAL:
+    >import serial
+    >import tosr0x
+    >sd=serial.Serial('/dev/ttyUSB0', timeout=0.1)
+    >myTosr0x=tosr0x.relayModule(sd) #Num relays not specified in this example
+
+    FOR WIFI:
+    >import tosr0x
+    >myTosr0x = tosr0x.relayModule( ('192.168.1.2',2000), 2) #Module of 2 relays
+
 Set relay states to either 0 or 1:
 
     >myTosr0x.set_relay_position(1,1)
@@ -66,14 +93,20 @@ Set relay states to either 0 or 1:
     >myTosr0x.set_relay_position(2,0)
     True
 
-(Note: relay numbering starts at 1. Set the state of all relays by using relay number 0)
+(Note: relay numbering starts at 1. Set the state of all relays by using relay number 0.)
 
 Get relay positions, (returned as a dict {relay : state}):
 
     >myTosr0x.get_relay_positions()
     {1: 1, 2: 0}
 
+Get Ambient Temperaure n Celsius degree for modules supporting a temperature probe:
+
+    >myTosr0x.get_temperature()
+    23.94
+
 Projects
 ----------------------
 
-This module is supported by [braubuddy](http://braubuddy.org), a temperature monitoring framework written in Python..
+* James Stewart (@amorphic) uses to _tosr0x_ to implement an Environmental Controller in [braubuddy](http://braubuddy.org), a temperature monitoring framework.
+* Alex Roche (@alexroche) is using _tosr0x_ with WIFI option to control blinds through openremote controller running on a Raspberry Pi.
