@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='tosr0x',
@@ -7,6 +7,9 @@ setup(
     author_email='jstewart101@gmail.com',
     url='https://github.com/amorphic/tosr0x',
     py_modules=['tosr0x'],
-    description='An interface to the tinysine.com tosr0x line of USB-controlled relays.',
+    description='An interface to tinysine.com tosr0x relay modules.',
     long_description=open('README.md').read()
+    install_requires=[
+        'pyserial>=2.0',
+    ]
 )
