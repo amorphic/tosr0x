@@ -1,31 +1,26 @@
-tosr0x
+TOSR0x
 ======================
 
-A Python module for communicating with 'TOSR0x' USB relay controllers available at [tinyosshop.com](http://www.tinyosshop.com/index.php?route=product/product&product_id=365) and other online retailers.
+A Python module for communicating with 'TOSR0x' relay controllers available at [tinyosshop.com](http://www.tinyosshop.com/index.php?route=product/product&product_id=365) and other online retailers.
 
-The module is a wrapper around Python's default serial module. It provides functionality to detect TOSR0x devices, set relay states and query relay states.
+Supported Hardware
+----------------------
 
+* [TOSR0x USB 2-8 relay](http://www.tinyosshop.com/index.php?route=product/category&path=141_142)
+* [TOSR0x WiFi 2-8 relay](http://www.tinyosshop.com/index.php?route=product/category&path=141_143)
+* [LazyBone WiFi single relay](http://www.tinyosshop.com/index.php?route=product/category&path=141_129)
 
-It also supports LazyBone, in thsi case only through WIFI
+Functionality
+----------------------
 
-Modifications by Alex from the original library:
------------------------------------------------
-
-The automatic discovery of number of relays is made optional, for the cases when it is not acceptable to toggle relay status as a method for discovering relays.If a number of relays is specified when an instance is created, then the intrusive automatic discovery won't be executed. 
-
-These modules can also mount a WIFI card. This library now supports connecting to the relay modules either through serial interface or WIFI.  For a WIFI relay you can cerate a instance indicating IP address, port and optionally the relay count of this module (1 for Lazybone, 2, 4 or 8)
-
-   e.g. myTosr0x = tosr0x.relayModule( ('192.168.1.2',2000), 2)
-
-There are some newer modules from tinyos that have the option to attach a temperature probe, and in this case it is possible to read the temperature through an additional command. For this case, a new 'get_temperature' method is added to read the ambient temperature.
-
-It's pending to handle some error conditions.
+* Detect TOSR0x USB and WiFi devices.
+* Set relay states.
+* Query relay states.
+* Query temperature (on supported models).
 
 Requirements
 ----------------------
 
-* A TOSR0x USB relay controller, (2-relay model tested but should work with 2:8-relay models)
-* Linux (may work with other Unix variants)
 * Python serial module (should be installed by default)
 
 Installation
@@ -39,13 +34,13 @@ If using Debian or a derivative (Ubuntu) additional USB permissions may be requi
 
  Add the user to the 'dialout' group:
 
-    >sudo usermod -G dialout -a <username>
+    $ sudo usermod -G dialout -a <username>
 
  Add a udev rules file to allow access to usb devices:
 
-    >cat /etc/udev/rules.d/50-usb.rules
+    $ cat /etc/udev/rules.d/50-usb.rules
     # allow access to usb devices for users in dialout group
-    'SUBSYSTEM=="usb", MODE="0666", GROUP="dialout"
+    SUBSYSTEM=="usb", MODE="0666", GROUP="dialout"
 
 Usage
 ----------------------
@@ -73,7 +68,7 @@ Alternatively, specify a USB serial device:
     Testing USB serial device on /dev/ttyUSB3
     TOSR0x device found on /dev/ttyUSB3
 
-It is possible to use directly the class without using the handler:
+It is also possible to use the class directly without using the handler:
 
     FOR SERIAL:
     >import serial
