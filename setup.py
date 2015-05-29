@@ -6,7 +6,11 @@ setup(
     author='James Stewart',
     author_email='jstewart101@gmail.com',
     url='https://github.com/amorphic/tosr0x',
+    description='An interface to tinyos.com TOSR0x relay modules.',
+    long_description=open('README.md').read(),
+    license='LICENSE.txt',
     py_modules=['tosr0x'],
-    description='An interface to the tinysine.com tosr0x line of USB-controlled relays.',
-    long_description=open('README.md').read()
+    install_requires=[
+        'pyserial>=2.0,<3.0',
+    ],
 )
