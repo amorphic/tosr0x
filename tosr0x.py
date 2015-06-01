@@ -35,6 +35,7 @@ TODO:
  - in case this library is called from different threads
 - split helper and class into separate modules
 - proper docstrings
+- add basic command-line tool
 """
 
 import sys
