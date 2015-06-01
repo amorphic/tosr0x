@@ -93,39 +93,39 @@ commands = {
     }
 }
 
-def handler(devicePath=False):
-    '''This is only useful for modules connected via serial.
-    find any TOSR0x modules present, intialise and return
-    them in a list
+def handler(devicePaths=[], relayCount=None):
+    """
+    Find attached TOSR0x modules present, intialise and return them in a list.
 
-    devicePath: eg '/dev/ttyUSB1'. If not provided,
-    '/dev/ttyUSB1-255' will be scanned for TOSR0x devices'''
-
-    # create list of device paths to check
-    if devicePath:
-        # only check device path if provided
-        devicePaths = [devicePath]
-    else:
-        # otherwise check all device paths /dev/ttyUSB*
-        devicePaths = [os.path.join('/dev', p) for p in os.listdir('/dev') if 'ttyUSB' in p]
-    # attempt to locate TOSR0x devices on paths
-    devices = locate_devices(devicePaths)
+    :param devicePaths: A list of device paths to scan. If not provided,
+        '/dev/ttyUSB[1-255]' will be scanned for compatible devices.
+    :type device_paths: :class:`iterator` of :class:`string`
+    :param relayCount: Number of relays present on module (1-8). If not
+        provided, all module relays will be cycled to discover this value.
+    :type relayCount: :class:`int`
+    """
+    if devicePaths == []:
+        # Check all device paths /dev/ttyUSB*
+        devicePaths = [os.path.join('/dev', p) 
+                       for p in os.listdir('/dev')
+                       if 'ttyUSB' in p]
+    devices = locate_devices(devicePaths, relayCount=relayCount)
     return devices
 
 
-def locate_devices(devicePaths):
+def locate_devices(devicePaths, relayCount=None):
     '''attempt to locate TOSR0x device in a list of device paths'''
 
     devices = []
     for devicePath in devicePaths:
-        device = check_path(devicePath)
+        device = check_path(devicePath, relayCount=relayCount)
         if device:
             log.info('TOSR0x device found on %s' % devicePath)
             devices.append(device)
 
     return devices
 
-def check_path(devicePath):
+def check_path(devicePath, relayCount=None):
     '''check for TOSR0x device at a given location by querying
     id/verison and checking response'''
 
@@ -148,7 +148,7 @@ def check_path(devicePath):
     response = convert_hex_to_int(serialDevice.readall())
     if len(response) == 2 and response[0] == EXPECTED_MODULE_ID:
         # expected response returned so device is a TOSR0x
-        thisTosr0x = relayModule(serialDevice)
+        thisTosr0x = relayModule(serialDevice, relayCount=relayCount)
         return thisTosr0x
     # not expected response so device is not a TOSR0x
     return False
@@ -174,7 +174,7 @@ def convert_hex_to_bin_str(hexChars):
 
 class relayModule():
 
-    def __init__(self, device, relayCount=False):
+    def __init__(self, device, relayCount=None):
 	'''initialise relay module'''
 
         # TOSR0x serial interface or ip address+port
