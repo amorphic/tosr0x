@@ -97,13 +97,16 @@ def handler(devicePaths=[], relayCount=None):
     """
     Find attached TOSR0x modules present, intialise and return them in a list.
 
-    :param devicePaths: A list of device paths to scan. If not provided,
-        '/dev/ttyUSB[1-255]' will be scanned for compatible devices.
-    :type device_paths: :class:`iterator` of :class:`string`
+    :param devicePaths: A device path or list of device paths to scan. If not
+        provided, '/dev/ttyUSB[1-255]' will be scanned for compatible devices.
+    :type device_paths: :class:`str` or :class:`iterator` of :class:`string`
     :param relayCount: Number of relays present on module (1-8). If not
         provided, all module relays will be cycled to discover this value.
     :type relayCount: :class:`int`
     """
+    # Allow a string to be passed for backwards compatibility.
+    if isinstance(devicePaths, str):
+        devicePaths = [devicePaths]
     if devicePaths == []:
         # Check all device paths /dev/ttyUSB*
         devicePaths = [os.path.join('/dev', p) 
