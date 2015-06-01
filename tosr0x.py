@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 """
 control wrapper for the TOSR0x USB/WIFI relay board.
 
