@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
-'''control wrapper for the TOSR0x USB/WIFI relay board.
+"""
+control wrapper for the TOSR0x USB/WIFI relay board.
 
 The TOSR0x is a relay module based on the FT232RL
 chip. This module works with 2-8 relay TOSR0x boards.
@@ -30,13 +31,15 @@ Author: Alex Roche
 http://github.com/alexroche
 
 TODO:
+- tidy up args for helper and class
+- allow helper to pass relay count
+ - separate auto relay count discovery from __set_relay_count__
 - fix logging
-- proper setup.py etc
-- fix pip deployment
-- update master with changes here
 - proper handling of send_relay_command() to handle it as a crutical section
-  in case this library is called from different threads
-'''
+ - in case this library is called from different threads
+- split helper and class into separate modules
+- proper docstrings
+"""
 
 import sys
 import os
@@ -116,6 +119,7 @@ def handler(devicePath=False):
     # attempt to locate TOSR0x devices on paths
     devices = locate_devices(devicePaths)
     return devices
+
 
 def locate_devices(devicePaths):
     '''attempt to locate TOSR0x device in a list of device paths'''
