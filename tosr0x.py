@@ -49,11 +49,6 @@ from threading import Lock
 
 # logging
 log = logging.getLogger('tosr0x')
-log.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-formatter = logging.Formatter("%(message)s")
-handler.setFormatter(formatter)
-log.addHandler(handler)
 
 # TOSR0x parameters
 EXPECTED_MODULE_ID = 15
