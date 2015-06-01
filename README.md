@@ -61,9 +61,18 @@ Call the handler function to return a list of tosr0x objects:
 
     <tosr0x.relayModule instance at 0xb68be46c>
 
-Alternatively, specify a USB serial device: 
+By default the handler scans all USB ports for compatible tosr0x devices. You
+can also specify a range of ports to scan:
 
-    >th = tosr0x.handler('/dev/ttyUSB3')
+    >th = tosr0x.handler(devicePath=['/dev/ttyUSB3'])
+
+    Testing USB serial device on /dev/ttyUSB3
+    TOSR0x device found on /dev/ttyUSB3
+
+Usually all relays on the module are cycled at initialisation to determine the
+relay count. You can specify a relay count to prevent this:
+
+    >th = tosr0x.handler(devicePath=['/dev/ttyUSB3'], relayCount=4)
 
     Testing USB serial device on /dev/ttyUSB3
     TOSR0x device found on /dev/ttyUSB3
