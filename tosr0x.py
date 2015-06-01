@@ -59,7 +59,7 @@ handler.setFormatter(formatter)
 log.addHandler(handler)
 
 # TOSR0x parameters
-expectedModuleId = 15
+EXPECTED_MODULE_ID = 15
 UNKNOWN_TYPE= 0
 SERIAL_TYPE = 1
 WIFI_TYPE = 2
@@ -154,7 +154,7 @@ def check_path(devicePath):
     serialDevice.write(commands['getIdVersion'])
     # module should return 2-byte string indicating module id, software version
     response = convert_hex_to_int(serialDevice.readall())
-    if len(response) == 2 and response[0] == expectedModuleId:
+    if len(response) == 2 and response[0] == EXPECTED_MODULE_ID:
         # expected response returned so device is a TOSR0x
         thisTosr0x = relayModule(serialDevice)
         return thisTosr0x
