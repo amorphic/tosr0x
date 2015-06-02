@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='tosr0x',
-    version='0.5.1',
+    version='0.5.2',
     author='James Stewart',
     author_email='jstewart101@gmail.com',
     url='https://github.com/amorphic/tosr0x',
