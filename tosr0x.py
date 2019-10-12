@@ -141,7 +141,7 @@ def check_path(devicePath, relayCount=None):
         serialDevice = serial.Serial(devicePath, timeout=SERIAL_DEFAULT_TIMEOUT)
         # read out any existing data
         serialDevice.readall()
-    except serial.SerialException, err:
+    except serial.SerialException as err:
         # location is not a serial device or not behaving as expected
         return False
     log.info('Testing USB serial device on %s' % devicePath)
@@ -182,7 +182,7 @@ class relayModule():
 
         # TOSR0x serial interface or ip address+port
 
-	if type(device) == types.TupleType :
+	if type(device) == tuple :
 	    self.relayAddress = device
 	    self.type = WIFI_TYPE
 	else :
