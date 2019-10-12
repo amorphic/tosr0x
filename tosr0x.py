@@ -128,9 +128,9 @@ def check_path(devicePath, relayCount=None):
         return False
     log.info("Testing USB serial device on %s" % devicePath)
     # send id/version request
-    serialDevice.write(commands["getIdVersion"])
+    serialDevice.write(commands["getIdVersion"].encode("utf8"))
     # module should return 2-byte string indicating module id, software version
-    response = convert_hex_to_int(serialDevice.readall())
+    response = convert_hex_to_int(serialDevice.readall().decode("utf8"))
     if len(response) == 2 and response[0] == EXPECTED_MODULE_ID:
         # expected response returned so device is a TOSR0x
         thisTosr0x = relayModule(serialDevice, relayCount=relayCount)
@@ -185,7 +185,7 @@ class relayModule:
                 self.relayCount = 8
 
     def __send_relay_command__(self, command, responseRequired=False):
-        """send a relay command to the realy considering type of relay
+        """send a relay command to the rely considering type of relay
         and returns data returned for rely if responseRequired.
 	It returns False in case of error"""
 
@@ -204,7 +204,7 @@ class relayModule:
 
             if self.type == SERIAL_TYPE:
                 try:
-                    if self.device.write(command) != 1:
+                    if self.device.write(command.encode("utf8")) != 1:
                         log.error("Unexpected Error: Serial Write diff of 1 byte")
                         correctExceution = False
                 except:
@@ -212,7 +212,8 @@ class relayModule:
                     log.error("error writing to serial device")
                 try:
                     if responseRequired:
-                        response = self.device.read(16)
+                        response_bytes = self.device.read(16)
+                        response = response_bytes.decode("utf8")
                         if len(response) < 1:
                             log.error(
                                 "Unexpected Error: Serial Read of less than 1 byte."

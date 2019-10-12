@@ -3,6 +3,8 @@ TOSR0x
 
 A Python module for communicating with 'TOSR0x' relay controllers available at [tinyosshop.com](http://www.tinyosshop.com/index.php?route=product/product&product_id=365) and other online retailers.
 
+*Note: as of v0.6.0 this module only supports Python 3.4+.*
+
 Supported Hardware
 ----------------------
 
