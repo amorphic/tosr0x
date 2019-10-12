@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='tosr0x',
-    version='0.6.2',
+    version='0.6.4',
     author='James Stewart',
     author_email='jstewart101@gmail.com',
     url='https://github.com/amorphic/tosr0x',
@@ -11,6 +11,6 @@ setup(
     license='LICENSE.txt',
     py_modules=['tosr0x'],
     install_requires=[
-        'pyserial>=2.0,<3.0',
+        'pyserial>=3.0,<4.0',
     ],
 )
